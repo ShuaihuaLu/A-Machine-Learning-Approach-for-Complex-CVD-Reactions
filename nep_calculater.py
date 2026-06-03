@@ -1,54 +1,54 @@
 import time
 from ase.io import read, write
 
-# 导入 NEP 计算器
+# Import the NEP calculator
 try:
     from pynep.calculate import NEP
 except ImportError:
-    print("请先安装 pynep: pip install pynep")
-    # 如果你想用 GPU，可以改为: 
+    print("Please install pynep first: pip install pynep")
+    # If you want to use GPU, you can change this to: 
     # from calorine.calculators import GPUNEP as NEP
     exit()
 
-# 1. 加载 NEP 模型
+# 1. Load the NEP model
 model_path = "nep.txt"
-print(f"正在加载 NEP 模型: {model_path} ...")
+print(f"Loading NEP model: {model_path} ...")
 calc = NEP(model_path)
 
-# 2. 读取待计算的 extxyz 轨迹 (这里以之前的 mace.extxyz 为例)
+# 2. Read the extxyz trajectory to be calculated (using the previous mace.extxyz as an example)
 input_file = "dft.extxyz"
 output_file = "nep_recalculated.extxyz"
 
-print(f"正在读取轨迹文件: {input_file} ...")
+print(f"Reading trajectory file: {input_file} ...")
 frames = read(input_file, index=":")
 total_frames = len(frames)
-print(f"共检测到 {total_frames} 帧结构。")
+print(f"Detected {total_frames} frames in total.")
 
-# 3. 循环计算每一帧的能量和力
-print("开始计算能量与力 (Energy & Forces) ...")
+# 3. Loop through to calculate the energy and forces for each frame
+print("Starting to calculate Energy & Forces ...")
 start_time = time.time()
 
-# 提前清空或创建输出文件
+# Clear or create the output file in advance
 with open(output_file, "w") as f:
     pass
 
 for i, atoms in enumerate(frames):
     frame_start = time.time()
     
-    # 绑定 NEP 计算器
+    # Bind the NEP calculator
     atoms.calc = calc
     
-    # 触发实际计算 (ASE 会自动更新 atoms.info['energy'] 和 atoms.arrays['forces'])
+    # Trigger the actual calculation (ASE will automatically update atoms.info['energy'] and atoms.arrays['forces'])
     energy = atoms.get_potential_energy()
     forces = atoms.get_forces()
     
-    # 将包含新能量和力的当前帧追加写入到新文件中
+    # Append the current frame with updated energy and forces to the new file
     write(output_file, atoms, format="extxyz", append=True)
     
-    # 打印进度条
+    # Print progress
     if (i + 1) % max(1, total_frames // 10) == 0 or (i + 1) == total_frames:
         elapsed = time.time() - start_time
-        print(f"进度: [{i+1}/{total_frames}] | 累计耗时: {elapsed:.2f}s")
+        print(f"Progress: [{i+1}/{total_frames}] | Total elapsed time: {elapsed:.2f}s")
 
-print(f"\n计算完成！NEP 预测轨迹已保存至: {output_file}")
-print(f"总共耗时: {time.time() - start_time:.2f} 秒。")
+print(f"\nCalculation complete! The NEP predicted trajectory has been saved to: {output_file}")
+print(f"Total time taken: {time.time() - start_time:.2f} seconds.")
