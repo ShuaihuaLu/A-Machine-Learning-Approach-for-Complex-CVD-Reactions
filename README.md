@@ -502,10 +502,9 @@ Suggested citation format:
 
 ```bibtex
 @software{chemal_sampler,
-  title  = {ChemAL: Chemistry-Aware Active Learning Sampler},
-  author = {Your Name},
+  title  = {Neural-network-based molecular dynamics reveals generic multi-transition states in CVD growth of two-dimensional layered materials},
+  author = {Shuaihua Lu},
   year   = {2026},
-  url    = {https://github.com/<your-username>/<your-repository>}
 }
 ```
 
