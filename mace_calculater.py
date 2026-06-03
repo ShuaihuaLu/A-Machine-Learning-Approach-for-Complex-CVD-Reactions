@@ -8,7 +8,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Current computing device: {device.upper()}")
 
 # 2. Load the custom MACE model
-model_path = "BN_Ni_stagetwo.model"
+model_path = "MACE.model"
 print(f"Loading MACE model: {model_path} ...")
 calc = MACECalculator(model_paths=model_path, device=device, default_dtype="float64") 
 # Note: If you used float32 during training, you can change default_dtype to "float32" to improve speed
